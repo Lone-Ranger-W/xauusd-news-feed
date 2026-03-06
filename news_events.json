@@ -1,0 +1,15 @@
+{
+  "generated_utc": "2026-03-02T20:00:00Z",
+  "lookahead_days": 14,
+  "event_count": 8,
+  "events": [
+    {"time":"2026-03-06T13:30:00Z","title":"ADP Non-Farm Employment Change","min_before":60,"min_after":30},
+    {"time":"2026-03-06T13:30:00Z","title":"Initial Jobless Claims","min_before":30,"min_after":30},
+    {"time":"2026-03-07T13:30:00Z","title":"Non-Farm Payrolls","min_before":90,"min_after":30},
+    {"time":"2026-03-07T13:30:00Z","title":"Unemployment Rate","min_before":90,"min_after":30},
+    {"time":"2026-03-11T12:30:00Z","title":"CPI m/m","min_before":60,"min_after":30},
+    {"time":"2026-03-11T12:30:00Z","title":"Core CPI m/m","min_before":60,"min_after":30},
+    {"time":"2026-03-13T12:30:00Z","title":"PPI m/m","min_before":60,"min_after":30},
+    {"time":"2026-03-18T18:00:00Z","title":"Federal Funds Rate","min_before":240,"min_after":60}
+  ]
+}
