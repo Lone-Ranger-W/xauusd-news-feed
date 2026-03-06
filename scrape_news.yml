@@ -24,12 +24,12 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      # 1. Check out the data branch (creates it if it doesn't exist)
-      - name: Checkout data branch
+      # 1. Check out main — this is where scrape_news.py lives
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
-          ref: data
-          fetch-depth: 1
+          ref: main
+          fetch-depth: 0       # full history needed to push to data branch later
 
       # 2. Set up Python
       - name: Set up Python 3.11
@@ -41,26 +41,33 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      # 4. Run the scraper (script lives on main, output goes to data branch)
-      - name: Fetch scraper script from main and run
-        run: |
-          # Pull the script from the main branch without switching branches
-          git fetch origin main
-          git checkout origin/main -- scrape_news.py
-          python scrape_news.py
+      # 4. Run the scraper — outputs to data/news_events.json in working tree
+      - name: Run scraper
+        run: python scrape_news.py
 
-      # 5. Commit and push the updated JSON if anything changed
-      - name: Commit updated news_events.json
+      # 5. Switch to data branch and commit the fresh JSON
+      - name: Commit and push to data branch
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stash the generated JSON so we can carry it across the branch switch
+          git stash -- data/news_events.json
+
+          # Switch to data branch
+          git fetch origin data
+          git checkout data
+
+          # Restore the generated file from stash
+          git stash pop
+
+          # Commit only if the file changed
           git add data/news_events.json
-          # Only commit if the file actually changed
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No changes to news_events.json — nothing to commit."
           else
             TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
             git commit -m "chore: update news_events.json [${TIMESTAMP}]"
             git push origin data
-            echo "Committed and pushed."
+            echo "Successfully pushed updated news_events.json to data branch."
           fi
